@@ -1,5 +1,16 @@
+struct Pos {
+    x: i32,
+    y: i32,
+}
+
+impl PartialEq for Pos {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
+    }
+}
+
 struct Layout {
-    map: Vec<(i32, i32)>,
+    map: Vec<Pos>,
 }
 
 impl Layout {
@@ -8,12 +19,12 @@ impl Layout {
     }
 
     fn add_start(&mut self) {
-        self.add(0, 0);
+        self.add(Pos { x: 0, y: 0 });
     }
 
-    fn add(&mut self, x: i32, y: i32) {
-        if !self.map.contains(&(x, y)) {
-            self.map.push((x, y));
+    fn add(&mut self, pos: Pos) {
+        if !self.map.contains(&pos) {
+            self.map.push(pos);
         }
     }
 
@@ -64,7 +75,7 @@ fn calculate(input: &str, n: i32) -> i32 {
         let b = blocks.get_mut(idx as usize).unwrap();
         idx = if idx + 1 >= n { 0 } else { idx + 1 };
         let pos = b.get_pos(&c);
-        layout.add(pos.0, pos.1);
+        layout.add(Pos { x: pos.0, y: pos.1 });
     }
 
     layout.total()
