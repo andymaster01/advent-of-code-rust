@@ -1,3 +1,5 @@
+use crate::DayResult;
+
 struct Pos {
     x: i32,
     y: i32,
@@ -88,8 +90,8 @@ fn calculate(input: &str, n: i32) -> i32 {
     layout.total()
 }
 
-pub fn exec(input: &str) -> (i32, i32) {
-    (calculate(input, 1), calculate(input, 2))
+pub fn exec(input: &str) -> DayResult {
+    DayResult::new(calculate(input, 1), calculate(input, 2))
 }
 
 #[cfg(test)]

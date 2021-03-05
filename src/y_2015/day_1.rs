@@ -1,4 +1,6 @@
-pub fn exec(input: &str) -> (i32, i32) {
+use crate::general::DayResult;
+
+pub fn exec(input: &str) -> DayResult {
     let mut found_pos = false;
     let mut pos = 0;
     let mut floor = 0;
@@ -13,7 +15,7 @@ pub fn exec(input: &str) -> (i32, i32) {
         }
     }
 
-    return (floor, pos);
+    return DayResult::new(floor, pos);
 }
 
 #[cfg(test)]
@@ -24,53 +26,53 @@ mod tests {
     #[test]
     fn can_go_up() {
         let input = "(";
-        let (floor, _) = exec(input);
+        let r = exec(input);
 
-        assert_eq!(1, floor);
+        assert_eq!(1, r.part1);
     }
     #[test]
     fn can_go_down() {
         let input = ")";
-        let (floor, _) = exec(input);
+        let r = exec(input);
 
-        assert_eq!(-1, floor);
+        assert_eq!(-1, r.part1);
     }
 
     #[test]
     fn can_go_up_and_down() {
         let input = "()";
-        let (floor, _) = exec(input);
+        let r = exec(input);
 
-        assert_eq!(0, floor);
+        assert_eq!(0, r.part1);
     }
 
     #[test]
     fn can_go_2_up_and_1_down() {
         let input = "(()";
-        let (floor, _) = exec(input);
+        let r = exec(input);
 
-        assert_eq!(1, floor);
+        assert_eq!(1, r.part1);
     }
 
     #[test]
     fn can_go_1_up_and_2_down() {
         let input = "())";
-        let (floor, _) = exec(input);
+        let r = exec(input);
 
-        assert_eq!(-1, floor);
+        assert_eq!(-1, r.part1);
     }
 
     #[test]
     fn check_entering_basement_single() {
         let input = ")";
-        let (_, pos) = exec(input);
-        assert_eq!(1, pos);
+        let r = exec(input);
+        assert_eq!(1, r.part2);
     }
 
     #[test]
     fn check_entering_basement_multiple() {
         let input = "()())";
-        let (_, pos) = exec(input);
-        assert_eq!(5, pos);
+        let r = exec(input);
+        assert_eq!(5, r.part2);
     }
 }

@@ -1,3 +1,5 @@
+use crate::general::DayResult;
+
 fn parse(input: &str) -> (i32, i32, i32) {
     let mut res = input.split("x");
     let l = res.next().unwrap().parse::<i32>().unwrap();
@@ -40,7 +42,7 @@ fn calculate_single(input: &str) -> (i32, i32) {
     (wrap, ribbon)
 }
 
-pub fn exec(input: &str) -> (i32, i32) {
+pub fn exec(input: &str) -> DayResult {
     let mut total_paper = 0;
     let mut total_ribbon = 0;
 
@@ -50,7 +52,7 @@ pub fn exec(input: &str) -> (i32, i32) {
         total_ribbon = total_ribbon + ribbon;
     }
 
-    (total_paper, total_ribbon)
+    DayResult::new(total_paper, total_ribbon)
 }
 
 #[cfg(test)]
@@ -108,9 +110,9 @@ mod tests {
     fn can_calculate_multiple() {
         let input = "2x3x4
 1x1x10";
-        let (wrap, bow) = exec(input);
+        let r = exec(input);
 
-        assert_eq!(101, wrap);
-        assert_eq!(48, bow);
+        assert_eq!(101, r.part1);
+        assert_eq!(48, r.part2);
     }
 }
