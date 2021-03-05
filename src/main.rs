@@ -14,8 +14,8 @@ fn main() {
         r_y15_02.0, r_y15_02.1
     );
 
-    let res = day_3::calculate(y15_03());
-    println!("day 3 - houses = {}", res);
+    let res = day_3::exec(y15_03());
+    println!("day 3 - houses = {}, with robo-santa = {}", res.0, res.1);
 }
 
 fn y15_01() -> (i32, i32) {

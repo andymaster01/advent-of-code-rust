@@ -1,40 +1,80 @@
 use std::collections::HashMap;
 
-pub fn calculate(input: &str) -> i32 {
-    let mut map = HashMap::new();
-    let mut x = 0;
-    let mut y = 0;
-    let mut total: i32 = 0;
+struct Block {
+    x: i32,
+    y: i32,
+    map: HashMap<i32, Vec<i32>>,
+}
 
-    map.insert(x, vec![y]);
+impl Block {
+    fn create() -> Block {
+        let mut b = Block {
+            x: 0,
+            y: 0,
+            map: HashMap::new(),
+        };
+        b.map.insert(0, vec![0]);
+        b
+    }
 
-    for c in input.chars() {
-        if c == '>' {
-            x = x + 1;
-        } else if c == '<' {
-            x = x - 1;
-        } else if c == '^' {
-            y = y - 1;
-        } else if c == 'v' {
-            y = y + 1;
+    fn add(&mut self, c: &char) {
+        if c == &'>' {
+            self.x += 1;
+        } else if c == &'<' {
+            self.x -= 1;
+        } else if c == &'^' {
+            self.y -= 1;
+        } else if c == &'v' {
+            self.y += 1;
         } else {
             panic!("unknown direction [{}]", c);
         }
 
-        if let Some(item) = map.get_mut(&x) {
-            if !item.contains(&y) {
-                item.push(y);
+        if let Some(item) = self.map.get_mut(&self.x) {
+            if !item.contains(&self.y) {
+                item.push(self.y);
             }
         } else {
-            map.insert(x, vec![y]);
+            self.map.insert(self.x, vec![self.y]);
         }
     }
 
-    for (_, v) in &map {
-        total = total + v.len() as i32;
+    fn total(blocks: &Vec<Block>) -> i32 {
+        let mut visited: Vec<(&i32, &i32)> = Vec::new();
+
+        for b in blocks {
+            for map in &b.map {
+                for y in map.1 {
+                    if !visited.contains(&(map.0, y)) {
+                        visited.push((map.0, y));
+                    }
+                }
+            }
+        }
+
+        visited.len() as i32
+    }
+}
+
+fn calculate(input: &str, n: i32) -> i32 {
+    let mut blocks: Vec<Block> = Vec::new();
+    let mut idx = 0;
+
+    for _ in 0..n {
+        blocks.push(Block::create());
     }
 
-    return total;
+    for c in input.chars() {
+        let b = blocks.get_mut(idx as usize).unwrap();
+        b.add(&c);
+        idx = if idx + 1 >= n { 0 } else { idx + 1 };
+    }
+
+    Block::total(&blocks)
+}
+
+pub fn exec(input: &str) -> (i32, i32) {
+    (calculate(input, 1), calculate(input, 2))
 }
 
 #[cfg(test)]
@@ -45,7 +85,7 @@ mod tests {
     #[test]
     fn can_calculate_initial() {
         let input = "";
-        let res = calculate(input);
+        let res = calculate(input, 1);
 
         assert_eq!(1, res);
     }
@@ -53,7 +93,7 @@ mod tests {
     #[test]
     fn can_calculate_move_right() {
         let input = ">";
-        let res = calculate(input);
+        let res = calculate(input, 1);
 
         assert_eq!(2, res);
     }
@@ -61,7 +101,7 @@ mod tests {
     #[test]
     fn can_calculate_move_left() {
         let input = "<";
-        let res = calculate(input);
+        let res = calculate(input, 1);
 
         assert_eq!(2, res);
     }
@@ -69,7 +109,7 @@ mod tests {
     #[test]
     fn can_calculate_move_up() {
         let input = "^";
-        let res = calculate(input);
+        let res = calculate(input, 1);
 
         assert_eq!(2, res);
     }
@@ -77,7 +117,7 @@ mod tests {
     #[test]
     fn can_calculate_move_down() {
         let input = "v";
-        let res = calculate(input);
+        let res = calculate(input, 1);
 
         assert_eq!(2, res);
     }
@@ -85,7 +125,7 @@ mod tests {
     #[test]
     fn can_calculate_move_twice_same_dir() {
         let input = ">>";
-        let res = calculate(input);
+        let res = calculate(input, 1);
 
         assert_eq!(3, res);
     }
@@ -93,7 +133,7 @@ mod tests {
     #[test]
     fn can_calculate_back_and_forth() {
         let input = "><";
-        let res = calculate(input);
+        let res = calculate(input, 1);
 
         assert_eq!(2, res);
     }
@@ -101,7 +141,7 @@ mod tests {
     #[test]
     fn can_calculate_square_move() {
         let input = "^>v<";
-        let res = calculate(input);
+        let res = calculate(input, 1);
 
         assert_eq!(4, res);
     }
@@ -109,8 +149,32 @@ mod tests {
     #[test]
     fn can_calculate_bunch_move() {
         let input = "^v^v^v^v^v";
-        let res = calculate(input);
+        let res = calculate(input, 1);
 
         assert_eq!(2, res);
+    }
+
+    #[test]
+    fn can_calculate_two_people_take_1() {
+        let input = "^v";
+        let res = calculate(input, 2);
+
+        assert_eq!(3, res);
+    }
+
+    #[test]
+    fn can_calculate_two_people_take_2() {
+        let input = "^>v<";
+        let res = calculate(input, 2);
+
+        assert_eq!(3, res);
+    }
+
+    #[test]
+    fn can_calculate_two_people_take_3() {
+        let input = "^v^v^v^v^v";
+        let res = calculate(input, 2);
+
+        assert_eq!(11, res);
     }
 }
