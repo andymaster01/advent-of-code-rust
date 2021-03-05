@@ -1,23 +1,38 @@
-use std::collections::HashMap;
-
-struct Block {
-    x: i32,
-    y: i32,
-    map: HashMap<i32, Vec<i32>>,
+struct Layout {
+    map: Vec<(i32, i32)>,
 }
 
-impl Block {
-    fn create() -> Block {
-        let mut b = Block {
-            x: 0,
-            y: 0,
-            map: HashMap::new(),
-        };
-        b.map.insert(0, vec![0]);
-        b
+impl Layout {
+    fn create() -> Layout {
+        Layout { map: Vec::new() }
     }
 
-    fn add(&mut self, c: &char) {
+    fn add_start(&mut self) {
+        self.add(0, 0);
+    }
+
+    fn add(&mut self, x: i32, y: i32) {
+        if !self.map.contains(&(x, y)) {
+            self.map.push((x, y));
+        }
+    }
+
+    fn total(&self) -> i32 {
+        self.map.len() as i32
+    }
+}
+
+struct Visitor {
+    x: i32,
+    y: i32,
+}
+
+impl Visitor {
+    fn create() -> Visitor {
+        Visitor { x: 0, y: 0 }
+    }
+
+    fn get_pos(&mut self, c: &char) -> (i32, i32) {
         if c == &'>' {
             self.x += 1;
         } else if c == &'<' {
@@ -30,47 +45,29 @@ impl Block {
             panic!("unknown direction [{}]", c);
         }
 
-        if let Some(item) = self.map.get_mut(&self.x) {
-            if !item.contains(&self.y) {
-                item.push(self.y);
-            }
-        } else {
-            self.map.insert(self.x, vec![self.y]);
-        }
-    }
-
-    fn total(blocks: &Vec<Block>) -> i32 {
-        let mut visited: Vec<(&i32, &i32)> = Vec::new();
-
-        for b in blocks {
-            for map in &b.map {
-                for y in map.1 {
-                    if !visited.contains(&(map.0, y)) {
-                        visited.push((map.0, y));
-                    }
-                }
-            }
-        }
-
-        visited.len() as i32
+        (self.x, self.y)
     }
 }
 
 fn calculate(input: &str, n: i32) -> i32 {
-    let mut blocks: Vec<Block> = Vec::new();
+    let mut blocks: Vec<Visitor> = Vec::new();
+    let mut layout = Layout::create();
     let mut idx = 0;
 
     for _ in 0..n {
-        blocks.push(Block::create());
+        blocks.push(Visitor::create());
     }
+
+    layout.add_start();
 
     for c in input.chars() {
         let b = blocks.get_mut(idx as usize).unwrap();
-        b.add(&c);
         idx = if idx + 1 >= n { 0 } else { idx + 1 };
+        let pos = b.get_pos(&c);
+        layout.add(pos.0, pos.1);
     }
 
-    Block::total(&blocks)
+    layout.total()
 }
 
 pub fn exec(input: &str) -> (i32, i32) {
