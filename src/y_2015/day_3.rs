@@ -3,6 +3,12 @@ struct Pos {
     y: i32,
 }
 
+impl Pos {
+    fn new(x: i32, y: i32) -> Pos {
+        Pos { x, y }
+    }
+}
+
 impl PartialEq for Pos {
     fn eq(&self, other: &Self) -> bool {
         self.x == other.x && self.y == other.y
@@ -19,7 +25,7 @@ impl Layout {
     }
 
     fn add_start(&mut self) {
-        self.add(Pos { x: 0, y: 0 });
+        self.add(Pos::new(0, 0));
     }
 
     fn add(&mut self, pos: Pos) {
@@ -34,29 +40,30 @@ impl Layout {
 }
 
 struct Visitor {
-    x: i32,
-    y: i32,
+    pos: Pos,
 }
 
 impl Visitor {
     fn create() -> Visitor {
-        Visitor { x: 0, y: 0 }
+        Visitor {
+            pos: Pos { x: 0, y: 0 },
+        }
     }
 
-    fn get_pos(&mut self, c: &char) -> (i32, i32) {
+    fn get_pos(&mut self, c: &char) -> Pos {
         if c == &'>' {
-            self.x += 1;
+            self.pos.x += 1;
         } else if c == &'<' {
-            self.x -= 1;
+            self.pos.x -= 1;
         } else if c == &'^' {
-            self.y -= 1;
+            self.pos.y -= 1;
         } else if c == &'v' {
-            self.y += 1;
+            self.pos.y += 1;
         } else {
             panic!("unknown direction [{}]", c);
         }
 
-        (self.x, self.y)
+        Pos::new(self.pos.x, self.pos.y)
     }
 }
 
@@ -75,7 +82,7 @@ fn calculate(input: &str, n: i32) -> i32 {
         let b = blocks.get_mut(idx as usize).unwrap();
         idx = if idx + 1 >= n { 0 } else { idx + 1 };
         let pos = b.get_pos(&c);
-        layout.add(Pos { x: pos.0, y: pos.1 });
+        layout.add(pos);
     }
 
     layout.total()
