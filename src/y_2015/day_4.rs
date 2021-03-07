@@ -1,8 +1,9 @@
 use crate::general::DayResult;
 use md5;
 
-fn calculate(input: &str, places: i32, compare: &str, max: i32) -> Option<i32> {
+fn calculate(input: &str, compare: &str, max: i32) -> Option<i32> {
     let mut number = 0;
+    let places = compare.len() as i32;
 
     loop {
         let x = number.to_string();
@@ -31,8 +32,8 @@ fn calculate(input: &str, places: i32, compare: &str, max: i32) -> Option<i32> {
 }
 
 pub fn exec(input: &str) -> DayResult {
-    let first = calculate(input, 5, "00000", 100000000);
-    let second = calculate(input, 6, "000000", 100000000);
+    let first = calculate(input, "00000", 100000000);
+    let second = calculate(input, "000000", 100000000);
 
     DayResult {
         part1: first.unwrap(),
@@ -46,7 +47,7 @@ mod tests {
 
     #[test]
     fn can_calculate_a() {
-        let r = calculate("a", 2, "32", 10);
+        let r = calculate("a", "32", 10);
 
         assert_eq!(r.is_some(), true);
         assert_eq!(r.unwrap(), 5);
@@ -54,7 +55,7 @@ mod tests {
 
     #[test]
     fn can_calculate_abcdef() {
-        let r = calculate("abcdef", 5, "00000", 1000000);
+        let r = calculate("abcdef", "00000", 1000000);
 
         assert_eq!(r.is_some(), true);
         assert_eq!(r.unwrap(), 609043);
@@ -62,7 +63,7 @@ mod tests {
 
     #[test]
     fn can_calculate_pqrstuv() {
-        let r = calculate("pqrstuv", 5, "00000", 10000000);
+        let r = calculate("pqrstuv", "00000", 10000000);
 
         assert_eq!(r.is_some(), true);
         assert_eq!(r.unwrap(), 1048970);
