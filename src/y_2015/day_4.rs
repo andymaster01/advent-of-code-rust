@@ -8,9 +8,7 @@ fn calculate(input: &str, places: i32, compare: &str, max: i32) -> Option<i32> {
         let x = number.to_string();
         let test = String::from(input) + &x;
         let digest = md5::compute(&test);
-        let parts = format!("{:x}", digest);
-        let mut c = parts.chars();
-
+        let mut c = format!("{:x}", digest).chars();
         let mut s = String::from("");
 
         for _ in 0..places {
