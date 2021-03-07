@@ -2,7 +2,7 @@ use crate::general::DayResult;
 use md5;
 
 pub fn exec(input: &str) -> DayResult {
-    let top = 10000000;
+    let top = 100000000;
     let mut number = 0;
 
     loop {
@@ -12,18 +12,18 @@ pub fn exec(input: &str) -> DayResult {
         let digest = md5::compute(&test);
         let parts = format!("{:x}", digest);
 
-        let ch = &parts[0..5];
+        let ch = &parts[0..6];
         // println!("number: {}, test: {}, md5:{}", x, &test, parts);
 
-        if ch == "00000" {
+        if ch == "000000" {
             break;
         }
 
         number += 1;
 
-        if number % 1000 == 0 {
-            println!("{}", number)
-        }
+        // if number % 1000 == 0 {
+        //     println!("{}", number)
+        // }
 
         if number == top {
             break;
